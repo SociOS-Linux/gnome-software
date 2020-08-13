@@ -1808,6 +1808,11 @@ save_install_queue (GsPluginLoader *plugin_loader)
 	g_autoptr(GString) s = NULL;
 	g_autofree gchar *file = NULL;
 
+	/* Saving the install queue during unit tests could trip up other tests as
+	 * they are run in parallel */
+	if (g_getenv ("GS_UNIT_TESTS_SKIP_SAVING_INSTALL_QUEUE") != NULL)
+		return;
+
 	s = g_string_new ("");
 	pending_apps = priv->pending_apps;
 	g_mutex_lock (&priv->pending_apps_mutex);
